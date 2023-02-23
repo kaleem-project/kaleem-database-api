@@ -19,7 +19,6 @@ public class Account implements AutoCloseable{
 	private boolean isActive;
 	private boolean isConfirmed;
 	private String profileImage;
-	private Integer age;
 	private String country;
 	private LocalDateTime creationTime;
 	private LocalDateTime lastLoginTime;
@@ -111,14 +110,6 @@ public class Account implements AutoCloseable{
 
 	public void setProfileImage(String profileImage) {
 		this.profileImage = profileImage;
-	}
-
-	public Integer getAge() {
-		return age;
-	}
-
-	public void setAge(Integer age) {
-		this.age = age;
 	}
 
 	public String getCountry() {
