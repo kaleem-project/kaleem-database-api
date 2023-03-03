@@ -1,8 +1,8 @@
 package bfcai.kaleem.databaseAPI.service;
-
 import bfcai.kaleem.databaseAPI.domain.Account;
 import bfcai.kaleem.databaseAPI.repository.AccountRepository;
 import bfcai.kaleem.databaseAPI.utils.AccountUtils;
+import bfcai.kaleem.databaseAPI.utils.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
@@ -15,84 +15,56 @@ public class AccountService {
 	@Autowired
 	private AccountRepository repository;
 
-
-	public HashMap<String, Object> validateAccount(String username, String password) {
-		HashMap<String, Object> result = new HashMap<>();
+	public Response validateAccount(String username, String password) {
+		var result = new Response();
 		Account userAccount = repository.findByUsernameAndPassword(username, password);
-		if (userAccount == null) {
-			result.put("code", 404);
-			result.put("message", "Account not found");
-			result.put("data", null);
-		} else {
-			result.put("code", 200);
-			result.put("message", "Account found");
-			result.put("data", userAccount);
-		}
+		if (userAccount == null) {result.make("Account not found", 404, null);}
+		else {result.make("Account found", 200, userAccount);}
 		return result;
 	}
 
-
-	public HashMap<String, Object> getAllAccounts() {
-		HashMap<String, Object> result = new HashMap<>();
+	public Response getAllAccounts() {
+		var result = new Response();
 		ArrayList<Account> accounts = repository.findAllByUsernameNotNull();
 		if (accounts.size() == 0) {
-			result.put("code", 404);
-			result.put("message", "No accounts found");
-			result.put("data", null);
+			result.make("No accounts found", 404, null);
 		} else {
-			result.put("code", 200);
-			result.put("message", "Accounts found");
-			result.put("data", accounts);
+			result.make("Accounts found", 200, accounts);
 		}
 		return result;
 	}
 
-
-	public HashMap<String, Object> addNewAccount(Account account) throws Exception {
-		HashMap<String, Object> result = new HashMap<>();
+	public Response insertNewAccount(Account account) throws Exception {
+		var result = new Response();
 		try (Account repoResponse = AccountUtils.fillingAccountData(repository.insert(account))) {
-			result.put("code", 201);
-			result.put("message", "Account created successfully");
-			result.put("data", repoResponse);
-		} catch (DuplicateKeyException ex) {
-			result.put("code", 400);
-			result.put("message", "Duplicated username or email");
-			result.put("data", "");
+			result.make("Account created successfully", 201, repoResponse);
+		}
+		catch (DuplicateKeyException ex) {
+			result.make("Duplicated username or email", 400, null);
 		}
 		return result;
 	}
 
-	public HashMap<String, Object> usernameAvailability(String username) {
-		HashMap<String, Object> result = new HashMap<>();
+	public Response checkUsernameAvailability(String username) {
+		var result = new Response();
 		Account account = repository.findAccountByUsername(username);
-		if (account == null) {
-			result.put("code", 200);
-			result.put("message", "Username is acceptable");
-		} else {
-			result.put("code", 400);
-			result.put("message", "Username is already exist");
-		}
+		if (account == null) {result.make("Username is acceptable", 200, null);}
+		else {result.make("Username is already exist", 400, null);}
 		return result;
 	}
 
-	public HashMap<String, Object> updateAccount(Account newAccount){
+	public Response updateAccount(Account newAccount){
+		var result = new Response();
 		Account account = repository.save(newAccount);
-		HashMap<String, Object> result = new HashMap<>();
-		result.put("code", 200);
-		result.put("message", "Account updated successfully");
-		result.put("data", account);
+		result.make("Account updated successfully", 200, account);
 		return result;
 	}
 
-	public HashMap<String, Object> deleteAccount(String id){
+	public Response deleteAccount(String id){
+		var result = new Response();
 		Account account = repository.deleteAccountById(id);
-		HashMap<String, Object> result = new HashMap<>();
-		result.put("code", 200);
-		result.put("message", "Account deleted successfully");
-		result.put("data", account);
+		result.make("Account deleted successfully", 200, account);
 		return result;
 	}
-
-
 
 }

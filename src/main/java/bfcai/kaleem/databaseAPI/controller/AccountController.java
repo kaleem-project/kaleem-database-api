@@ -5,7 +5,7 @@ import bfcai.kaleem.databaseAPI.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.HashMap;
+
 
 @RestController
 @RequestMapping("/api/v3/database")
@@ -14,41 +14,39 @@ public class AccountController {
 	@Autowired
 	private AccountService service;
 
-
-	@PostMapping("/accounts/signin")
-	public ResponseEntity<?> signinUser(@RequestBody Account account){
-		HashMap<String, Object> searchResult = service.validateAccount(account.getUsername(), account.getPassword());
-		return ResponseEntity.status((int)searchResult.get("code")).body(searchResult);
+	@PostMapping("/accounts/validate")
+	public ResponseEntity<?> signin(@RequestBody Account account){
+		var response = service.validateAccount(account.getUsername(), account.getPassword());
+		return ResponseEntity.status(response.getCode()).body(response.toData());
 	}
 
-	@PostMapping("/accounts/signup")
-	public ResponseEntity<?> signupUser(@RequestBody Account account) throws Exception {
-		HashMap<String, Object> response = service.addNewAccount(account);
-		return ResponseEntity.status((int)response.get("code")).body(response);
+	@PostMapping("/accounts")
+	public ResponseEntity<?> signup(@RequestBody Account account) throws Exception {
+		var response = service.insertNewAccount(account);
+		return ResponseEntity.status(response.getCode()).body(response);
 	}
 
 	@GetMapping("/accounts")
 	public ResponseEntity<?> getAllAccounts(){
-		HashMap<String, Object> response = service.getAllAccounts();
-		return ResponseEntity.status((int)response.get("code")).body(response);
+		var response = service.getAllAccounts();
+		return ResponseEntity.status(response.getCode()).body(response.toData());
 	}
-
 
 	@GetMapping("/accounts/{username}")
 	public ResponseEntity<?> isUsernameAvailable(@PathVariable String username){
-		var res = service.usernameAvailability(username);
-		return ResponseEntity.status((int) res.get("code")).body(res);
+		var response = service.checkUsernameAvailability(username);
+		return ResponseEntity.status(response.getCode()).body(response.toData());
 	}
 
 	@PutMapping("/accounts")
 	public ResponseEntity<?> updateAccount(@RequestBody Account account) throws Exception {
 		var response = service.updateAccount(account);
-		return ResponseEntity.status((int) response.get("code")).body(response);
+		return ResponseEntity.status(response.getCode()).body(response.toData());
 	}
 
 	@DeleteMapping("accounts/{id}")
 	public ResponseEntity<?> deleteAccount(@PathVariable String id){
 		var response = service.deleteAccount(id);
-		return ResponseEntity.status((int)response.get("code")).body(response);
+		return ResponseEntity.status(response.getCode()).body(response.toData());
 	}
 }

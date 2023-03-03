@@ -3,8 +3,8 @@ package bfcai.kaleem.databaseAPI.utils;
 import bfcai.kaleem.databaseAPI.domain.Account;
 import java.time.LocalDateTime;
 
-public class AccountUtils {
 
+public class AccountUtils {
 
 	public static Account fillingAccountData(Account account){
 		LocalDateTime now = LocalDateTime.now();
@@ -12,7 +12,5 @@ public class AccountUtils {
 		account.setCreationTime(now);
 		return account;
 	}
-
-
 
 }
