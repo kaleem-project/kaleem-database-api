@@ -9,11 +9,12 @@ import java.sql.Timestamp;
 
 @Data
 @Document(collection = "Messages")
-public class Message implements  AutoCloseable{
+public class Message implements AutoCloseable{
 
-	@Id private String id;
+	@Id
+	private String id;
 	private String senderId;
-	private ChatRoom parentId;
+	private String parentId;
 	private String content;
 	@Indexed(direction= IndexDirection.DESCENDING)
 	private Timestamp timestamp;
